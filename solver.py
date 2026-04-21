@@ -3,7 +3,7 @@ import sys
 def read_input():
     rows, cols = map(int, sys.stdin.readline().split()) # Input do grid
 
-    # Dict para armazenar os pontos de entrega (chave: caractere, valor: coordenadas)
+    # Dicionário para armazenar os pontos de entrega (chave: caractere, valor: coordenadas)
     delivery = {}
     start = None
 
@@ -28,14 +28,21 @@ def permutations(elements):
 
 
 def solve(delivery, start):
-
+    """Função principal que calcula o caminho ótimo para as entregas."""
+    
+    # Caso não haja pontos de entrega, imprime string vazia e retorna
     if not delivery:
         return ""
-
+    
+    # Define a lista com a chave todos os pontos no grid (ex: ['A', 'B', 'C'])
     points = list(delivery.keys())
+    
     distance_cache = {}
 
     def get_distance(a, b):
+        """Calcula a distância entre dois pontos (com cache)."""
+
+        # Verifica se a distância já foi calculada anteriormente
         if (a, b) in distance_cache:
             return distance_cache[(a, b)]
     
@@ -48,15 +55,20 @@ def solve(delivery, start):
             x2, y2 = start
         else:
             x2, y2 = delivery[b]
-    
+        
+        # Calcula a distância(soma das diferenças absolutas)
         dist = abs(x1 - x2) + abs(y1 - y2)
+
+        # Armazena a distância no cache para ambas as direções (a->b e b->a)
         distance_cache[(a, b)] = dist
         distance_cache[(b, a)] = dist
         return dist
-        
+
+
     min_total = float('inf')
     best_path = None
 
+     # Gera todas as permutações possíveis dos pontos de entrega
     for perm in permutations(points):
         total = get_distance('R', perm[0])
 
@@ -69,10 +81,12 @@ def solve(delivery, start):
                 break
 
         total += get_distance(perm[-1], 'R')
-
+        
+        # Atualiza o melhor caminho se encontrar uma distância menor
         if total < min_total:
             min_total = total
             best_path = perm
+        # Em caso de empate, considera a primeira permutação encontrada
         elif total == min_total and best_path is None:
             best_path = perm
 
