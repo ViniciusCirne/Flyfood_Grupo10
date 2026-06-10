@@ -32,10 +32,10 @@ SOLVERS = [
 ]
 
 SOLVER_SIZES = {
-    "Força Bruta": list(range(2, 5)),
-    "DFS com Poda": list(range(2, 5)),
-    "MST + Poda": list(range(2, 23)),
-    "Algoritmo Genético": list(range(2, 23)),
+    "Força Bruta": list(range(2, 11)),
+    "DFS com Poda": list(range(2, 13)),
+    "MST + Poda": list(range(2, 22)),
+    "Algoritmo Genético": list(range(2, 22)),
 }
 
 COLORS = {
@@ -254,10 +254,9 @@ def plot_performance(results, ts):
             color=COLORS.get(name)
         )
 
-    ax.set_yscale("log")
     ax.set_title("Tempo de Execução por Número de Entregas")
     ax.set_xlabel("Número de entregas")
-    ax.set_ylabel("Tempo (s) - Escala Log")
+    ax.set_ylabel("Tempo (s)")
     ax.grid(True)
     ax.legend()
 
@@ -329,7 +328,7 @@ def analyze(csv_file, ts):
             color=COLORS.get(solver)
         )
 
-    plt.yscale("log")
+    # plt.yscale("log")
     plt.legend()
 
     analysis_file = f"analysis_runtime_{ts}.png"
