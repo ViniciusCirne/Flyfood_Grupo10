@@ -17,7 +17,6 @@ def read_input():
 
     return delivery, start
 
-
 def permutations(elements):
     if len(elements) <= 1:
         yield elements
@@ -75,7 +74,6 @@ def solve_dfs_pruning(delivery, start):
 
     dfs('R', points, 0, [])
     return ' '.join(best_path)
-
 
 def solve_greedy_pruning(delivery, start):
     if not delivery:
@@ -148,7 +146,6 @@ def solve_greedy_pruning(delivery, start):
     dfs('R', points, 0, [])
     return ' '.join(best_path)
 
-
 def solve_mst_pruning(delivery, start):
     if not delivery:
         return ""
@@ -157,6 +154,8 @@ def solve_mst_pruning(delivery, start):
     distance_cache = {}
 
     def get_distance(a, b):
+        # Calcula a distância Manhattan entre dois pontos
+        # e reutiliza o valor caso ele já tenha sido calculado
         if (a, b) in distance_cache:
             return distance_cache[(a, b)]
 
@@ -170,6 +169,8 @@ def solve_mst_pruning(delivery, start):
         return dist
 
     def greedy():
+        # Gera uma solução inicial usando o ponto mais próximo
+        # Essa solução serve como limite superior para as podas
         remaining = set(points)
         current = 'R'
         route = []
@@ -191,6 +192,8 @@ def solve_mst_pruning(delivery, start):
     mst_cache = {}
 
     def mst_cost(nodes):
+        # Calcula o custo da árvore geradora mínima dos pontos restantes
+        # O frozenset é usado porque a ordem dos nós não altera a MST
         key = frozenset(nodes)
 
         if key in mst_cache:
@@ -203,6 +206,7 @@ def solve_mst_pruning(delivery, start):
         visited = {nodes[0]}
         total = 0
 
+        # Implementação simples do algoritmo de Prim
         while len(visited) < len(nodes):
             best_edge = float("inf")
             best_node = None
@@ -225,12 +229,17 @@ def solve_mst_pruning(delivery, start):
         return total
 
     def lower_bound(current, remaining, cost):
+        # Estima o menor custo possível para completar a rota atual
+        # Se essa estimativa já for pior que a melhor solução, o ramo é podado
         if not remaining:
             return cost + get_distance(current, 'R')
 
         mst = mst_cost(remaining)
 
+        # Conecta o ponto atual aos pontos restantes
         connect_current = min(get_distance(current, p) for p in remaining)
+
+        # Garante uma conexão de volta para o ponto inicial
         connect_home = min(get_distance('R', p) for p in remaining)
 
         return cost + mst + connect_current + connect_home
@@ -238,9 +247,11 @@ def solve_mst_pruning(delivery, start):
     def dfs(current, remaining, cost, path):
         nonlocal best_cost, best_path
 
+        # Poda: não continua se nem a melhor estimativa supera a solução atual
         if lower_bound(current, remaining, cost) >= best_cost:
             return
 
+        # Caso base: todos os pontos foram visitados
         if not remaining:
             total = cost + get_distance(current, 'R')
 
@@ -250,6 +261,7 @@ def solve_mst_pruning(delivery, start):
 
             return
 
+        # Visita primeiro os pontos mais próximos para encontrar boas soluções cedo
         ordered = sorted(
             remaining,
             key=lambda p: get_distance(current, p)

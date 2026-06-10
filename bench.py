@@ -25,24 +25,24 @@ RANDOM_SEED = 46
 EXACT_SOLVER = ("MST + Pruning", mst_solve)
 
 SOLVERS = [
-    ("Brute Force", bf_solve),
-    ("DFS Pruning", dfs_solve),
-    ("MST + Pruning", mst_solve),
-    ("Gen Algo", gen_solve)
+    ("Força Bruta", bf_solve),
+    ("DFS com Poda", dfs_solve),
+    ("MST + Poda", mst_solve),
+    ("Algoritmo Genético", gen_solve)
 ]
 
 SOLVER_SIZES = {
-    "Brute Force": list(range(2, 9)),
-    "DFS Pruning": list(range(2, 9)),
-    "MST + Pruning": list(range(2, 15)),
-    "Gen Algo": list(range(2, 15)),
+    "Força Bruta": list(range(2, 5)),
+    "DFS com Poda": list(range(2, 5)),
+    "MST + Poda": list(range(2, 23)),
+    "Algoritmo Genético": list(range(2, 23)),
 }
 
 COLORS = {
-    "Brute Force": "#e05c5c",
-    "DFS Pruning": "#5c9ee0",
-    "MST + Pruning": "#5cba7d",
-    "Gen Algo": "#03fca5",
+    "Força Bruta": "#e05c5c",
+    "DFS com Poda": "#5c9ee0",
+    "MST + Poda": "#5cba7d",
+    "Algoritmo Genético": "#03fca5",
 }
 
 
