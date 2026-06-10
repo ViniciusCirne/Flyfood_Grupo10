@@ -277,11 +277,10 @@ def solve_genetic(
         return ""
 
     points = list(delivery.keys())
-
     distance_cache = {}
 
     def get_distance(a, b):
-
+        # Calcula a distância Manhattan entre dois pontos e guarda em cache
         if (a, b) in distance_cache:
             return distance_cache[(a, b)]
 
@@ -296,79 +295,56 @@ def solve_genetic(
         return dist
 
     def route_cost(route):
-
         total = get_distance('R', route[0])
 
         for i in range(len(route) - 1):
             total += get_distance(route[i], route[i + 1])
 
-        total += get_distance(route[-1], 'R')
-
-        return total
+        return total + get_distance(route[-1], 'R')
 
     def create_population():
-
+        # Gera a população inicial com rotas aleatórias
         population = []
 
         for _ in range(population_size):
-
             chromosome = points[:]
-
             random.shuffle(chromosome)
-
             population.append(chromosome)
 
         return population
 
     def tournament_selection(population):
-
+        # Torneio binário: escolhe dois indivíduos e retorna o de menor custo
         a = random.choice(population)
         b = random.choice(population)
 
-        return min(
-            [a, b],
-            key=route_cost
-        )[:]
+        if route_cost(a) <= route_cost(b):
+            return a[:]
+
+        return b[:]
 
     def crossover(parent1, parent2):
-
+        # Crossover OX: mantém um trecho do primeiro pai e completa com o segundo
         size = len(parent1)
-
-        left, right = sorted(
-            random.sample(range(size), 2)
-        )
+        left, right = sorted(random.sample(range(size), 2))
 
         child = [None] * size
-
         child[left:right + 1] = parent1[left:right + 1]
 
-        remaining = [
-            gene
-            for gene in parent2
-            if gene not in child
-        ]
-
+        remaining = [gene for gene in parent2 if gene not in child]
         idx = 0
 
         for i in range(size):
-
             if child[i] is None:
-
                 child[i] = remaining[idx]
-
                 idx += 1
 
         return child
 
     def mutate(route):
-
+        # Mutação simples: troca dois pontos da rota
         if random.random() < mutation_rate:
-
-            i, j = random.sample(
-                range(len(route)),
-                2
-            )
-
+            i, j = random.sample(range(len(route)), 2)
             route[i], route[j] = route[j], route[i]
 
     population = create_population()
@@ -377,36 +353,28 @@ def solve_genetic(
     best_cost = float('inf')
 
     for _ in range(generations):
-
         parent1 = tournament_selection(population)
         parent2 = tournament_selection(population)
 
-        child = crossover(
-            parent1,
-            parent2
-        )
-
+        child = crossover(parent1, parent2)
         mutate(child)
 
         child_cost = route_cost(child)
 
+        # Seleção de sobreviventes não geracional:
+        # substitui apenas o pior indivíduo caso o filho seja melhor
         worst_idx = max(
             range(len(population)),
             key=lambda i: route_cost(population[i])
         )
 
-        worst_cost = route_cost(
-            population[worst_idx]
-        )
+        worst_cost = route_cost(population[worst_idx])
 
         if child_cost < worst_cost:
-
             population[worst_idx] = child
 
         if child_cost < best_cost:
-
             best_cost = child_cost
-
             best_solution = child[:]
 
     return ' '.join(best_solution)
